@@ -1,0 +1,16 @@
+{
+  "name": "chai-backend",
+  "version": "1.0.0",
+  "description": "a back at chai aur code channel - youtube (Hitesh Choudhary)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "chai",
+    "javascript",
+    "backend"
+  ],
+  "author": "Papan Sarkar",
+  "license": "ISC"
+}
