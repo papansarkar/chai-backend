@@ -19,6 +19,10 @@ const userSchema = new Schema(
             lowercase: true,
             trim: true,
         },
+        password: {
+            type: String,
+            required: [true, "Password is required..."]
+        },
         fullName: {
             type: String,
             required: true,
@@ -38,10 +42,6 @@ const userSchema = new Schema(
                 ref: "Video"
             }
         ],
-        password: {
-            type: String,
-            required: [true, "Password is required"]
-        },
         refreshToken: {
             type: String
         }
