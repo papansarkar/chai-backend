@@ -1,11 +1,11 @@
-# NOTES:
+# Database:
 
 ## Database connection related notes:
 - database connection can throw all kinds of error 
-    - use `try/catch `
+    - so use `try/catch `
     - or `promise` (`resolve`, `reject`) with `then()`, `catch()`, `finally()`
 - db connection is depends on process time
-    - use `async/wait`
+    - so use `async/wait`
 - mongoose docs suggests to connect db with one-liner code **but** **this is not a good professional practice**
     - ### one approach
     ```javascript
@@ -48,8 +48,65 @@
 
     - ### another probably the best approach is to modulerizing the code, in case the index.js becomes clunky with all sorts of connections
         - this approach invloves db/database folder where we create all the connection code and export it.
-        - index file imports the file and executesit
+        - src directory index file imports the file and executes it
 
+        ```javascript
+        //db.index.js
+        import mongoose from "mongoose";
+
+        import { DB_NAME } from "../constants.js";
+
+
+        const connectDB = async () => {
+            try {
+                const connectionInstance = await mongoose.connect(`${process.env.MONGODB_URI}/${DB_NAME}`)
+                console.log(`\n MongoDB connected !!! DB HOST: ${connectionInstance.connection.host}`);
+            } catch (error) {
+                console.log("MONGODB connection FAILED", error);
+                process.exit(1) // study this in node js docs + ai
+                }
+        }
+
+        export default connectDB
+        ```
+
+        ```javascript
+        // src/index.js
+        // database connection
+
+        // require('dotenv').config({path: './env'})
+        import dotenv from "dotenv"
+        import connectDB from "./db/index.js";
+        import app from "./app.js"
+
+        dotenv.config({
+            path: './env'
+        })
+
+        const PORT = process.env.PORT || 4000
+
+        connectDB()
+        // .then(()=>{
+        //     app.on("listening", ()=>{
+        //         console.log("Server is listeing for connection...");
+        //     })
+        // }) // added by me but unable test if this is functional
+        .then(()=>{
+            app.on("error", (err)=>{
+                console.log("ERR: ", err)
+            });
+        }) // added by me but unable test if this is functional
+        .then(() => {
+            app.listen(PORT, () => {
+                console.log(`Server is running on port : ${
+                    PORT
+                }`);
+            })
+        })
+        .catch((err) => {
+            console.log("MONGO db connection failed !!!", err);
+        })
+        ```
 
 
 
@@ -211,6 +268,84 @@ app.use(express.static("public"))
 - in some cases we may need to store secure cookies to the user browser on which only server can have access and perform `CRUD` related task
 
 
+
+## Questions:
+- why don't use `next()` after each config setup like middleware settings?
 ---
 --------- end of config settings ----------
 ----
+
+
+# utils
+
+## asyncHander.js
+- throughout the development process we will make lots of database connection calls,and as we can see 
+in `db/index.js` file, the db connection always needs error handling and `async/await`, which generates 
+boiler code
+
+- the solution is wrapper function which handle the errors and asynchronous nature
+- to achieve that we can use `Promise()` with catch or `try/catch`
+- here we used `promise()`
+
+```javascript
+const asyncHandler = (requestHandler) => {
+    return async (req, res, next) => {
+        await Promise.resolve(requestHandler(req, res, next))
+        .catch((err)=>next(err))
+    }
+}
+
+export {asyncHandler}
+```
+
+## ApiError.js
+- throuout the codebase we will face lots of errors, to organize those errors in structured manner is useful when dealing with them later
+- so we extended the `node js` `Error` class to customize our errors for better error comprehensiveness down the road
+
+```javascript
+class ApiError extends Error {
+    constructor(
+        statusCode,
+        message= "Something went wrong",
+        errors = [],
+        stack = ""
+    ){
+        super(message)
+        this.statusCode = statusCode
+        this.data = null
+        this.message = message
+        this.success = false
+        this.errors = errors
+
+        if(stack){
+            this.stack = stack
+        }else{
+            Error.captureStackTrace(this, this.constructor)
+        }
+    }
+}
+
+export {ApiError}
+```
+
+## ApiRespose
+- similar to the `ApiError.js` we need a organized `response` tool to better understand the responses 
+- but node js doesn't provide any `Response` Handling class like `Error` class
+- becasue `Response` and `Request` is part of server which is handled by `Express`
+- in that case we create a class from ground up especially for managing responses
+- notice the `statusCode` parameter (use chatgpt or mdm site), here **100-300** are all success codes
+
+```javascript
+class ApiResponse{
+    constructor(statusCode, data, message = "Success"){
+        this.statusCode = statusCode
+        this.data = data
+        this.message = message
+        this.success = statusCode < 400
+    }
+}
+```
+
+# Middleware
+
+[Perplexity Explaination](https://www.perplexity.ai/search/how-does-middleware-err-req-re-KLS_FM1aSDeyVbNzgOPh.Q)
