@@ -143,3 +143,74 @@ Let's break down how the code works to connect the database and start the server
 4. **Connect to Database**: Using `connectDB`.
 5. **Handle Events and Start Server**: Set up event listeners and start the server if the database connection is successful.
 
+
+---
+------------End of section--------------
+---
+
+# config settings: 
+
+## app.use()
+
+- this `use()` method mostly used when dealing with middleware and config settings
+- middleware doesn't call the `app.get() `, instead it calls the `app.use()`.
+- it makes sense though middleware is just a middle man performing some task before the routing methods performs db or server related task, so we use it :) 
+
+
+## CORS (npm package)
+
+```javascript
+import cors from "core"
+app.use(cors({
+    origin: process.env.CORS_ORIGIN,
+    Credential: true
+}))
+```
+- It's safety measure for web, which gives options to config correct origin from where the backend calls can occur using the `origin` parameter
+- don't use default options mentioned in docs
+- there are also dynamic origin setting for multiple origin
+- it uses `app.use()`
+
+## app.use(express.json())
+
+```javascript
+app.use(express.json({limit: "16kb"}))
+```
+
+- this `.json()` is middleware config which allows us config incoming json from user to backend
+- comes with express, no need for extra package, in older express we needed body-parser package but it comes with express now, so no stress
+- it has options limit the json object mainly to not crash the server
+- here we used 16kb limit, it can be set according the server capacity
+
+## url encoder config
+
+```javascript
+app.use(express.urlencoded({extended: true, limit: "16kb"}))
+```
+
+- sometimes different url encoder converts an url with different special character, like '+' instead of '?'...
+- we need to explicitly mention this to express so when we need the url data for our backend business logic it obeys a specific rule, we can infer correct url format
+- it is available through express directly 
+- here the `extended` keyword allows to pass nested object
+- `limit` sets the size
+
+## config for static resources
+
+```javascript
+app.use(express.static("public"))
+```
+- it also comes with express
+- we use it to store static resources in the server like fevicon, images etc
+- the `public` keyword is for a folder name which will store the resources, the name can be anything but for convience we used public since it will accessible to anyone
+
+## cookie config
+```javascript
+```
+- the `cookie` config's job is to allow us to access user's browser `cookie`
+- with that we can set or get `cookie` from the user browser similar to `CRUD` operation
+- in some cases we may need to store secure cookies to the user browser on which only server can have access and perform `CRUD` related task
+
+
+---
+--------- end of config settings ----------
+----
