@@ -409,3 +409,16 @@ class ApiResponse{
 ## URI
 ## URL
 ## URN
+
+
+# User Registration Logic building processs
+    // get user details from frontend/postman
+    // validation - not empty
+    // check if user already exists: username, email
+    // check for images, check for avatar (first multer, then cloudinary)
+    // if available - upload them to cloudinary, avatar
+    // check required field avatar if properly uploaded
+    // create user object - create entry in db
+    // remove password and refresh token field from response
+    // check for user creation 
+    // if true return response, else return error res
