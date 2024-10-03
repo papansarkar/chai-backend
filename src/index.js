@@ -3,12 +3,35 @@
 // require('dotenv').config({path: './env'})
 import dotenv from "dotenv"
 import connectDB from "./db/index.js";
+import app from "./app.js"
 
 dotenv.config({
     path: './env'
 })
 
+const PORT = process.env.PORT || 4000
+
 connectDB()
+// .then(()=>{
+//     app.on("listening", ()=>{
+//         console.log("Server is listeing for connection...");
+//     })
+// }) // added by me but unable test if this is functional
+.then(()=>{
+    app.on("error", (err)=>{
+        console.log("ERR: ", err)
+    });
+}) // added by me but unable test if this is functional
+.then(() => {
+    app.listen(PORT, () => {
+        console.log(`Server is running on port : ${
+            PORT
+        }`);
+    })
+})
+.catch((err) => {
+    console.log("MONGO db connection failed !!!", err);
+})
 
 
 
