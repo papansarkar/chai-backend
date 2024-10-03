@@ -400,5 +400,12 @@ class ApiResponse{
 
 
 # Middleware
-
 [Perplexity Explaination](https://www.perplexity.ai/search/how-does-middleware-err-req-re-KLS_FM1aSDeyVbNzgOPh.Q)
+
+
+
+# HTTP
+
+## URI
+## URL
+## URN
