@@ -346,6 +346,59 @@ class ApiResponse{
 }
 ```
 
+# Model
+
+## third-party storage(cloudinary):
+
+## password:
+
+## refreshToken:
+
+## aggregation pipeline:
+### `mongoose-aggregate-paginate-v2`
+- plugins [`videoSchema.plugin(mongooseAggregatePaginate)`]
+
+## bcrypt:
+
+## jwt:
+
+### access token
+
+### refresh token
+
+## mongoose middleware hooks: [https://mongoosejs.com/docs/middleware.html]
+### pre hook
+- because pre hook needs context (`this` keyword), arrow functions doesn't have context, we need to use normal function inside the hook method
+    ```javascript
+        userSchema.pre("save", async function (next) {
+            if(!this.isModified("password")) return next()
+            
+            this.password = bcrypt.hash(this.password, 10)
+            next()
+        })
+    ```
+
+### post hook
+
+
+
+## Questions:
+- how to enable searchable function on a database property?
+- what are the functions of `index`?
+- why does arrow functions not suitable inside pre hook methods?
+    - because pre hook needs context (`this` keyword), arrow functions doesn't have context. 
+
+
+# File Upload
+
+## cloudinary
+
+## multer
+
+## node js fs
+### fsPromises.unlink(path)
+
+
 # Middleware
 
 [Perplexity Explaination](https://www.perplexity.ai/search/how-does-middleware-err-req-re-KLS_FM1aSDeyVbNzgOPh.Q)
